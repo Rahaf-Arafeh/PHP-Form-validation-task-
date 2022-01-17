@@ -1,5 +1,6 @@
 <?php 
         session_start();
+        include "db.php";
         ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,45 +15,55 @@
     <?php 
         if ($_SERVER["REQUEST_METHOD"] == "POST")
         {
+            $username=$_POST['username'];
+            $password=$_POST['password'];
+            $confirm_pass=$_POST['cofirm_password'];
+            $email=$_POST['email'];
             $email_regx= "/^([a-zA-Z0-9\.]+@+[a-zA-Z]+(\.)+[a-zA-Z]{2,3})$/";
             $flag=0;
-            echo "khkjhkhjkhk";
-        
-            if(!empty($_POST['email']) && preg_match($email_regx,$_POST['email'])){
+            
+            if(!empty($email) && preg_match($email_regx,$email)){
                 $flag++;
-                echo "one";
             }
-            echo "222222222222";
-            if(!empty($_POST['password']) && strlen($_POST['password'])>=8){
+            if(!empty($password) && strlen($password)>=8){
                 $flag++;
-                echo "two";
             }
-            if(!empty($_POST['cofirm_password']) && $_POST['password']==$_POST['cofirm_password']){
+            if(!empty($confirm_pass) && $password==$confirm_pass){
                 $flag++;
-                echo "three";
             }
             if ($flag==3){
-               $_SESSION['users'][] = ['email'=>$_POST['email'],'password'=>$_POST['password']];
-               header('Location:http://localhost/FORM-PROJECT/Signin.php'); 
-
-            }
-            // else if($flag>=3 && issest($_SESSION['users'])){
-            //     $_SESSION['users'][]= ['email'=>$_POST['email'],'password'=>$_POST['password']];
-            //     header('Location:http://localhost/FORM-PROJECT/Signin.php'); 
-            // }
-           
+                //    $_SESSION['users'][] = ['email'=>$_POST['email'],'password'=>$_POST['password']];
+           try {
+          // set the PDO error mode to exception
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+          $sql = "INSERT INTO users (username, password , email)
+            VALUES (:username, :password, :email)";
+          // use exec() because no results are returned
+          $stmt= $conn->prepare($sql);
+          $stmt->execute(['username'=>$username,'password'=>$password,'email'=>$email]);
+          $conn->exec($stmt);
+          echo "New record created successfully";
+          } catch(PDOException $e) {
+          echo $sql . "<br>" . $e->getMessage();
+         }
+  
+         $conn = null;
+         header('Location:http://localhost/FORM-PROJECT/Signin.php'); 
         }
-        else echo "ffffffffffffff";
-        echo $_POST['email'];
-        var_dump($_SESSION['users']);
+            
+        }
+        // var_dump($_SESSION['users']);
         
        
     ?>
 <div class="container px-5 my-5">
     <form id="contactForm"   action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
         <div class="mb-3">
+        <label class="form-label" for="username">username :</label>
+            <input class="form-control" id="username" type="text" name="username" placeholder="username"  data-sb-validations="required"
+             required/></div>
+             <div class="mb-3">
             <label class="form-label" for="emailAddress">Email Address</label>
-            <p><?php echo $_POST['email']; ?></p>
             <input class="form-control" id="emailAddress" type="email" name="email" placeholder="Email Address"  data-sb-validations="required,email"
              onchange="emailValidation()" required/>
             <span id="email_err"></span>
@@ -80,7 +91,7 @@
             <div class="text-center text-danger mb-3">Error sending message!</div>
         </div>
         <div class="d-grid">
-            <button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Sign Up</button>
+            <button id="submitButton" class="btn btn-primary btn-lg" type="submit">Sign Up</button>
         </div>
         <p>you already have account <a href="Signin.php">Sign In</a></p>
     </form>

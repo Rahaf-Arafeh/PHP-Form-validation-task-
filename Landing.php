@@ -1,5 +1,6 @@
 <?php 
         session_start();
+        include "db.php";
         ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +12,11 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Welcome <?php echo $_SESSION['users']; ?>
-     </h1>
+    <?php
+        if(isset($_SESSION['username'])){
+            echo '<h1>Login Success, Welcome '.$_SESSION['username'].'</h1>';
+        }
+    ?>
+    
 </body>
 </html>

@@ -1,24 +1,8 @@
 <?php 
+session_start();
         
-        session_start();
-        $flag=false;
-        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-              echo "rrrrrrrr";
-            if(!empty($_POST['email1']) && !empty($_POST['password1'])){
-               $flag=true;
-            }
-           
-            if ($flag){
-                foreach($_SESSION['users'] as $user){
-                  if ($user['email']==$_POST['email1'] && $user['password']==$_POST['password1'])
-                    header("Location:Landing.php");
-                }
-            }
-            
-        }
-   
-      
-        ?>
+include "db.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,8 +13,51 @@
     <title>Document</title>
 </head>
 <body>
+<?php 
+      
+        $msg="";
+        if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+            $username1=$_POST['username1'];
+            $email1=$_POST['email1'];
+            $password1=$_POST['password1'];
+                   try{
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        if(empty($email1) || empty($password1) || empty($username1)){
+                            $msg="<label>All Field Required!!</label>";
+                        }
+                        else{
+                            $query="SELECT * FROM users WHERE password='$password1' AND email='$email1'";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute();
+                            $count=$stmt->rowCount();
+                            if($count>0){
+                                    $_SESSION['username']=$username1;
+                                    header("Location:http://localhost/FORM-PROJECT/Landing.php");
+                                  }
+                            else {
+                                $msg="<label>Username or password are wrong!!</label>";
+                            }
+                        }
+                  } catch(PDOException $e) {
+                    echo "Error: " . $e->getMessage();
+                  }
+         
+            
+        }
+   
+      
+        ?>
 <div class="container px-5 my-5">
-    <form id="contactForm" data-sb-form-api-token="API_TOKEN" action="Landing.php" method="POST">
+    <form id="contactForm" data-sb-form-api-token="API_TOKEN" action="<?php $_SERVER['PHP_SELF']; ?>" method="POST">
+            <?php
+             if(isset($msg))
+              echo '<label class="form-label text-danger">'.$msg.'</label>';
+             ?>
+             <div class="mb-3">
+            <label class="form-label" for="emailAddress">Username </label>
+            <input class="form-control" id="username" name='username1' type="text" placeholder="username" data-sb-validations="required" 
+            required/>
+        </div>
         <div class="mb-3">
             <label class="form-label" for="emailAddress">Email Address</label>
             <input class="form-control" id="emailAddress" name='email1' type="email" placeholder="Email Address" data-sb-validations="required,email" 
@@ -42,49 +69,13 @@
             <input class="form-control" id="password" type="password" name='password1' placeholder="Password" data-sb-validations="required" 
             required/>
             <span id="pass_err"></span>
-        <div class="d-none" id="submitSuccessMessage">
-            <div class="text-center mb-3">
-                <div class="fw-bolder">Form submission successful!</div>
-                <p>To activate this form, sign up at</p>
-                <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-            </div>
-        </div>
-        <div class="d-none" id="submitErrorMessage">
-            <div class="text-center text-danger mb-3">Error sending message!</div>
         </div>
         <div class="d-grid">
-            <button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Sign In</button>
+            <button class="btn btn-primary btn-lg" id="submitButton" type="submit">Sign In</button>
             <p>you don't have account <a href="Signup.php">Sign Up</a></p>
         </div>
     </form>
 </div>
-<!-- <script>
-       let email=document.getElementById('emailAddress');
-      let password=document.getElementById('password');
-  function emailValidation(){
-      let email_err=document.getElementById('email_err');
-      let email_regx="[a-z0-9]+@[a-z]+.[a-z]{2,3}";
-      if(email.value.match(email_regx)){
-          email_err.innerText="Valid";
-          email_err.style.color="green";
-      }
-      else{
-        email_err.innerText=" Not Valid";
-          email_err.style.color="red";
-      }
-  }
-  function passwordValidation(){
-      let pass_err=document.getElementById('pass_err');
-      if(password.value.length<8){
-        pass_err.innerText=" Not Valid";
-          pass_err.style.color="red";
-      }
-      else{
-        pass_err.innerText=" Valid";
-          pass_err.style.color="green";
-      }
-  }
-</script> -->
-<!-- <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script> -->
+
 </body>
 </html>
