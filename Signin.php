@@ -26,11 +26,20 @@ include "db.php";
                             $msg="<label>All Field Required!!</label>";
                         }
                         else{
-                            $query="SELECT * FROM users WHERE password='$password1' AND email='$email1'";
-                            $stmt = $conn->prepare($query);
-                            $stmt->execute();
-                            $count=$stmt->rowCount();
-                            if($count>0){
+                            // $query="SELECT * FROM users WHERE password='$password1' AND email='$email1'";
+                            // $stmt = $conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1'");
+                            $user=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1'");
+                            // $stmt->execute();
+                            $user->execute();
+                            // $count=$stmt->rowCount();
+                            $admin=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1' AND is_admin=1");
+                            // $stmt1=$conn->prepare($admin);
+                            $admin->execute();
+                            // $count1=$admin->rowCount();
+                            if($admin->rowCount()>0){
+                                header("Location:http://localhost/FORM-PROJECT/dashboard/");
+                              }
+                            else if($user->rowCount()>0){
                                     $_SESSION['username']=$username1;
                                     header("Location:http://localhost/FORM-PROJECT/Landing.php");
                                   }

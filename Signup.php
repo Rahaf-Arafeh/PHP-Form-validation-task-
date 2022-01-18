@@ -109,7 +109,7 @@
               return false;
           }
       }
-      function emailValidation(){
+      function emailValidation(e){
       let email_err=document.getElementById('email_err');
       let email_regx="[a-z0-9]+@[a-z]+.[a-z]{2,3}";
       if(email.value.match(email_regx)){
@@ -117,28 +117,31 @@
           email_err.style.color="green";
       }
       else{
+        e.preventDefault();
         email_err.innerText=" Not Valid";
           email_err.style.color="red";
       }
   }
-  function passwordValidation(){
+  function passwordValidation(e){
       let pass_err=document.getElementById('pass_err');
       if(password.value.length<8){
         pass_err.innerText=" Not Valid";
           pass_err.style.color="red";
+          e.preventDefault();
       }
       else{
         pass_err.innerText=" Valid";
           pass_err.style.color="green";
       }
   }
-  function confirmPassValidation(){
+  function confirmPassValidation(e){
       let conf_password_err=document.getElementById('conf_password_err');
       if(confPassword.value == password.value){
         conf_password_err.innerText=" Valid";
         conf_password_err.style.color="green";
       }
       else{
+        e.preventDefault();  
         conf_password_err.innerText="Not Valid";
         conf_password_err.style.color="red";
       }
