@@ -1,48 +1,53 @@
 <?php 
 session_start();
-        
+
 include "db.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Document</title>
-</head>
-<body>
-<?php 
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title>Document</title>
+    </head>
+    <body>
+        <?php 
+        // $user=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1'");
+        // $user->execute();
+        // $admin=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1' AND is_admin=1");
+        // $admin->execute();
+        // if($admin->rowCount()>0){
+        //     header("Location:http://localhost/FORM-PROJECT/dashboard/");
+        //   }
+        // else if($user->rowCount()>0){
+        //         $_SESSION['username']=$username1;
+        //         header("Location:http://localhost/FORM-PROJECT/Landing.php");
+        //       }
       
         $msg="";
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $username1=$_POST['username1'];
             $email1=$_POST['email1'];
             $password1=$_POST['password1'];
                    try{
-                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        if(empty($email1) || empty($password1) || empty($username1)){
+                        if(empty($email1) || empty($password1)){
                             $msg="<label>All Field Required!!</label>";
                         }
                         else{
-                            // $query="SELECT * FROM users WHERE password='$password1' AND email='$email1'";
-                            // $stmt = $conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1'");
-                            $user=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1'");
-                            // $stmt->execute();
-                            $user->execute();
-                            // $count=$stmt->rowCount();
-                            $admin=$conn->prepare("SELECT * FROM users WHERE password='$password1' AND email='$email1' AND is_admin=1");
-                            // $stmt1=$conn->prepare($admin);
-                            $admin->execute();
-                            // $count1=$admin->rowCount();
-                            if($admin->rowCount()>0){
-                                header("Location:http://localhost/FORM-PROJECT/dashboard/");
-                              }
-                            else if($user->rowCount()>0){
-                                    $_SESSION['username']=$username1;
+                             $sql="SELECT * FROM users WHERE password='$password1' AND email='$email1'";
+                             $result=$conn->query($sql);
+                              
+                            if($result->rowCount()!=0){
+                                $row=$result->fetch(PDO::FETCH_ASSOC);
+                                if($row["is_admin"]==1){
+                                    header("Location:http://localhost/FORM-PROJECT/dashboard/");
+                                }
+                                else if($row["is_admin"]==0){
+                                    $_SESSION["username"]=$row['username'];
                                     header("Location:http://localhost/FORM-PROJECT/Landing.php");
-                                  }
+                                }
+                            }
                             else {
                                 $msg="<label>Username or password are wrong!!</label>";
                             }
@@ -62,11 +67,6 @@ include "db.php";
              if(isset($msg))
               echo '<label class="form-label text-danger">'.$msg.'</label>';
              ?>
-             <div class="mb-3">
-            <label class="form-label" for="emailAddress">Username </label>
-            <input class="form-control" id="username" name='username1' type="text" placeholder="username" data-sb-validations="required" 
-            required/>
-        </div>
         <div class="mb-3">
             <label class="form-label" for="emailAddress">Email Address</label>
             <input class="form-control" id="emailAddress" name='email1' type="email" placeholder="Email Address" data-sb-validations="required,email" 
