@@ -1,3 +1,6 @@
+<?php 
+include "../db.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +24,24 @@
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
-
+<?php
+$edit=$_GET["id"];
+if ($_SERVER["REQUEST_METHOD"] == "GET")
+{
+       $data=("SELECT * FROM users WHERE id='$edit'");
+        $result=$conn->query($data);
+        $row=$result->fetch(PDO::FETCH_ASSOC);
+}
+?>
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+       $data=("UPDATE users SET `username`='$_POST[edit_username]',`email`='$_POST[edit_email]',`password`='$_POST[edit_password]',`is_admin`='$_POST[edit_isadmin]' WHERE id='$edit'");
+        $stmt=$conn->prepare($data);
+        $stmt->execute();
+        header("Location:http://localhost/FORM-PROJECT/dashboard/tables.php");
+}
+?>
 <body class="bg-gradient-primary">
 
     <div class="container">
@@ -39,43 +59,39 @@
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Edit Information</h1>
                                     </div>
-                                    <form class="user">
+                                    <form class="user" method="POST">
+                                    <div class="form-group">
+                                        <label>Username:</label>
+                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                            placeholder="Name" name="edit_username" value='<?php echo "$row[username]"; ?>'>
+                                    </div>
                                         <div class="form-group">
+                                        <label>Email:</label>
                                             <input type="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Enter Email Address...">
+                                                placeholder="Enter Email Address..." name="edit_email" value='<?php echo "$row[email]"; ?>'>
                                         </div>
                                         <div class="form-group">
+                                        <label>Password:</label>
                                             <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password">
+                                                id="exampleInputPassword" placeholder="Password" name="edit_password" value='<?php echo "$row[password]"; ?>'>
                                         </div>
                                         <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
-                                                <label class="custom-control-label" for="customCheck">Remember
-                                                    Me</label>
-                                            </div>
+                                        <label>Is Admin:</label>
+                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                            placeholder="is admin" name="edit_isadmin" value='<?php echo "$row[is_admin]"; ?>'>
+
+                                    </div>
                                         </div>
-                                        <a href="index.html" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </a>
-                                        <hr>
-                                        <a href="index.html" class="btn btn-google btn-user btn-block">
-                                            <i class="fab fa-google fa-fw"></i> Login with Google
-                                        </a>
-                                        <a href="index.html" class="btn btn-facebook btn-user btn-block">
-                                            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
-                                        </a>
+                                        <!-- <a class="btn btn-primary btn-user btn-block">
+                                            Edit
+                                        </a> -->
+                                        <button type='submit' class="btn btn-primary btn-user btn-block">
+                                            Edit
+                                          </button>
                                     </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
-                                    <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
-                                    </div>
                                 </div>
                             </div>
                         </div>
