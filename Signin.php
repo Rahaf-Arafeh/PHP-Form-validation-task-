@@ -39,6 +39,7 @@ include "db.php";
                              $result=$conn->query($sql);
                               
                             if($result->rowCount()!=0){
+
                                 $row=$result->fetch(PDO::FETCH_ASSOC);
                                 if($row["is_admin"]==1){
                                     header("Location:http://localhost/FORM-PROJECT/dashboard/");
@@ -47,6 +48,9 @@ include "db.php";
                                     $_SESSION["username"]=$row['username'];
                                     header("Location:http://localhost/FORM-PROJECT/Landing.php");
                                 }
+                                $date=("UPDATE users SET `date_last_login`=CURRENT_TIMESTAMP WHERE id='$row[id]'");
+                                $stmt=$conn->prepare($date);
+                                $stmt->execute();
                             }
                             else {
                                 $msg="<label>Username or password are wrong!!</label>";
