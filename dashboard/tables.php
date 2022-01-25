@@ -12,6 +12,15 @@ include "../db.php";
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
+    <style>
+    tr td img{
+    width:15vw;
+    height:20vh
+   }
+
+
+
+</style>
 
     <title>SB Admin 2 - Tables</title>
 
@@ -434,7 +443,131 @@ include "../db.php";
                             </div>
                         </div>
                     </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Products</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <button><a href="createProduct.php">Create User</a></button>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>product name</th>
+                                            <th>product image</th>
+                                            <th>price</th>
+                                            <th>quantity in stock</th>
+                                            <th>description</th>
+                                            <th>category name</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        $data=$conn->prepare("SELECT products.id,products.product_name,products.product_img,products.price,
+                                        products.quantity_instock,products.description,categories.category_name FROM
+                                         products INNER JOIN categories ON products.category_id=categories.id ");
+                                        $data->execute();
+                                        foreach($data as $element){
+                                            echo "<tr>";
+                                            echo "<td>$element[id]</td>";
+                                            echo "<td>$element[product_name]</td>";
+                                            echo "<td><img src='$element[product_img]'/></td>";
+                                            echo "<td>$element[price]</td>";
+                                            echo "<td>$element[quantity_instock]</td>";
+                                            echo "<td>$element[description]</td>";
+                                            echo "<td>$element[category_name]</td>";
+                                           echo  "<td><a href='editProduct.php?id=$element[id]'>Edit</a></td>";
+                                            echo "<td><a href='delete.php?id=$element[id] && name=product'>Delete</a></td>";
+                                            echo"</tr>";
+                                        }
+                                        // if ($_SERVER["REQUEST_METHOD"] == "POST")
+                                          
+                                        // {
+                                        //     foreach($_POST as $name => $value){
+                                        //          if($name == 'delete'){
+                                        //             $data=$conn->prepare("DELETE FROM users WHERE id='$value'");
+                                        //              $data->execute();
+                    
+                                        //          }
+                            
+                                        //     }
+                                        // }
+                                        ?>
 
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>username</th>
+                                            <th>password</th>
+                                            <th>email</th>
+                                            <th>is_admin</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Categories</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <button><a href="createCategory.php">Create Categories</a></button>
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>id</th>
+                                            <th>category name</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php 
+                                        $data=$conn->prepare("SELECT * FROM categories ");
+                                        $data->execute();
+                                        foreach($data as $element){
+                                            echo "<tr>";
+                                            echo "<td>$element[id]</td>";
+                                            echo "<td>$element[category_name]</td>";
+                                           echo  "<td><a href='editCategory.php?id=$element[id]'>Edit</a></td>";
+                                            echo "<td><a href='delete.php?id=$element[id]&&name=category'>Delete</a></td>";
+                                            echo"</tr>";
+                                        }
+                                        // if ($_SERVER["REQUEST_METHOD"] == "POST")
+                                          
+                                        // {
+                                        //     foreach($_POST as $name => $value){
+                                        //          if($name == 'delete'){
+                                        //             $data=$conn->prepare("DELETE FROM users WHERE id='$value'");
+                                        //              $data->execute();
+                    
+                                        //          }
+                            
+                                        //     }
+                                        // }
+                                        ?>
+
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                        <th>id</th>
+                                            <th>category name</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
 
